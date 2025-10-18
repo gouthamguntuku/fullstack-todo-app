@@ -111,5 +111,3 @@ If you prefer to run services locally (Node and PostgreSQL installed on your mac
 - `server`: The Node.js/Express backend.
 - `db`: The PostgreSQL database.
 
-## Next steps (what I did and how I can help)
-I prepared this expanded README with detailed prerequisites, environment examples, and both Docker and local run instructions. If you want, I can commit this update directly to main (as requested) — which I'm doing now — and open a PR or create a backup branch if you prefer not to push directly to main.

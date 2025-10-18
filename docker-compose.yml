@@ -1,0 +1,40 @@
+version: '3.8' # Specifies the version of the Docker Compose file format.
+services:
+  server:
+    build: ./server # Specifies the build context for the server image.
+    ports:
+      - "5000:5000" # Maps port 5000 on the host to port 5000 on the container.
+    volumes:
+      - ./server:/usr/src/app # Mounts the host's './server' directory to the container's '/usr/src/app' directory.
+      - /usr/src/app/node_modules # Anonymous volume to persist node_modules.
+    environment:
+      - PGUSER=postgres # PostgreSQL username.
+      - PGHOST=db # The hostname of the database container.
+      - PGDATABASE=postgres # The PostgreSQL database name.
+      - PGPASSWORD=postgres_password # The PostgreSQL password.
+      - PGPORT=5432 # The port the PostgreSQL server is running on.
+    depends_on:
+      - db # Specifies that the server depends on the db service.
+  client:
+    build:
+      context: ./client # Specifies the build context for the client image.
+      dockerfile: Dockerfile # Specifies the Dockerfile to use.
+    ports:
+      - "3000:3000" # Maps port 3000 on the host to port 3000 on the container.
+    volumes:
+      - ./client:/app # Mounts the host's './client' directory to the container's '/app' directory.
+      - /app/node_modules # Anonymous volume to persist node_modules.
+    depends_on:
+      - server # Specifies that the client depends on the server service.
+  db:
+    image: postgres:14-alpine # Specifies the Docker image to use for the database.
+    environment:
+      - POSTGRES_PASSWORD=postgres_password # Sets the password for the PostgreSQL database.
+    volumes:
+      - db-data:/var/lib/postgresql/data # Named volume to persist database data.
+      - ./server/init.sql:/docker-entrypoint-initdb.d/init.sql # Runs the init.sql script on database initialization.
+    ports:
+      - "5432:5432" # Maps port 5432 on the host to port 5432 on the container.
+
+volumes:
+  db-data: # Defines the 'db-data' named volume.
